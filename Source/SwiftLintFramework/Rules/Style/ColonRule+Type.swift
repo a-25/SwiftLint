@@ -48,7 +48,8 @@ internal extension ColonRule {
         var validKinds: Bool
         switch (syntaxKinds[0], syntaxKinds[1]) {
         case (.identifier, .typeidentifier),
-             (.typeidentifier, .typeidentifier):
+             (.typeidentifier, .typeidentifier),
+             (.identifier, .attributeID):
             validKinds = true
         case (.identifier, .keyword),
              (.typeidentifier, .keyword):

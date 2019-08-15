@@ -17,4 +17,16 @@ DispatchQueue.global().async {
     }
 }
 
+func foo(
+    bar: String,
+    baz: String,
+    completion: @escaping (_ error: Error?) -> Void
+    ) {}
+
+//func foo(
+//    bar: String,
+//    baz: String,
+//    completion :(_ error: Error?) -> Void
+//    ) {}
+
 dispatchMain()

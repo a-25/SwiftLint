@@ -95,7 +95,17 @@ internal struct ColonRuleExamples {
         "func abc() { def(ghi↓:jkl) }",
         "func abc(def: Void) { ghi(jkl↓:mno) }",
         "class ABC { let def = ghi(jkl↓:mno) } }",
-        "func foo() { let dict = [1↓ : 1] }"
+        "func foo() { let dict = [1↓ : 1] }",
+        "func foo(\n" +
+            "bar: String,\n" +
+            "baz: String,\n" +
+            "completion :@escaping (_ error: Error?) -> Void\n" +
+        ") {}",
+        "func foo(\n" +
+            "bar: String,\n" +
+            "baz: String,\n" +
+            "completion :(_ error: Error?) -> Void\n" +
+        ") {}"
     ]
 
     static let corrections = [

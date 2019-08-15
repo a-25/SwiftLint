@@ -2321,6 +2321,22 @@ class ABC { let def = ghi(jkl↓:mno) } }
 func foo() { let dict = [1↓ : 1] }
 ```
 
+```swift
+func foo(
+bar: String,
+baz: String,
+completion :@escaping (_ error: Error?) -> Void
+) {}
+```
+
+```swift
+func foo(
+bar: String,
+baz: String,
+completion :(_ error: Error?) -> Void
+) {}
+```
+
 </details>
 
 
