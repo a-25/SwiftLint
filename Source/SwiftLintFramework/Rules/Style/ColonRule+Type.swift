@@ -2,6 +2,8 @@ import Foundation
 import SourceKittenFramework
 
 internal extension ColonRule {
+    static let returnIdentifier = "->"
+
     var pattern: String {
         // If flexible_right_spacing is true, match only 0 whitespaces.
         // If flexible_right_spacing is false or omitted, match 0 or 2+ whitespaces.
@@ -17,9 +19,15 @@ internal extension ColonRule {
             ":" +                       // immediately followed by a colon
             spacingRegex +              // followed by right spacing regex
             ")" +                       // end group
+            "(?:" +                     // Start type group
+            "((\\S[^,]+" +
+            ColonRule.returnIdentifier +
+            ").*)" +                     // Closure type
+            "|" +                       // or
             "(" +                       // Capture a type identifier
             "[\\[|\\(]*" +              // which may begin with a series of nested parenthesis or brackets
-            "\\S)"                      // lazily to the first non-whitespace character.
+            "\\S)" +                    // lazily to the first non-whitespace character
+            ")"                         // end group.
     }
 
     func typeColonViolationRanges(in file: File, matching pattern: String) -> [NSRange] {
@@ -28,6 +36,15 @@ internal extension ColonRule {
             if match.range(at: 2).length > 0 && syntaxTokens.count > 2 { // captured a generic definition
                 let tokens = [syntaxTokens.first, syntaxTokens.last].compactMap { $0 }
                 return isValidMatch(syntaxTokens: tokens, file: file)
+            }
+
+            // Check if captured a closure type
+            let closureRange = match.range(at: 4)
+            if closureRange.location != NSNotFound {
+                let possibleClosureType = nsstring.substring(with: closureRange)
+                if possibleClosureType.contains(ColonRule.returnIdentifier) {
+                    return true
+                }
             }
 
             return isValidMatch(syntaxTokens: syntaxTokens, file: file)
