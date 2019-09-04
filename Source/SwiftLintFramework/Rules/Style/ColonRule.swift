@@ -57,7 +57,7 @@ public struct ColonRule: CorrectableRule, ConfigurationProviderRule {
                 contents = regularExpression.stringByReplacingMatches(in: contents,
                                                                       options: [],
                                                                       range: range,
-                                                                      withTemplate: "$1$2: $3")
+                                                                      withTemplate: "$1$2: $3$5")
             case .dictionary, .functionCall:
                 contents = contents.bridge().replacingCharacters(in: range, with: ": ")
             }

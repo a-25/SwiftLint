@@ -99,12 +99,12 @@ internal struct ColonRuleExamples {
         "func foo(\n" +
             "bar: String,\n" +
             "baz: String,\n" +
-            "completion :@escaping (_ error: Error?) -> Void\n" +
+            "↓completion :@escaping (_ error: Error?) -> Void\n" +
         ") {}",
         "func foo(\n" +
             "bar: String,\n" +
             "baz: String,\n" +
-            "completion :(_ error: Error?) -> Void\n" +
+            "↓completion :(_ error: Error?) -> Void\n" +
         ") {}"
     ]
 
@@ -162,6 +162,26 @@ internal struct ColonRuleExamples {
         "class ABC { let def = ghi(jkl↓:mno) } }": "class ABC { let def = ghi(jkl: mno) } }",
         "func foo() { let dict = [1↓ : 1] }": "func foo() { let dict = [1: 1] }",
         "class Foo {\n    #if false\n    #else\n        let bar = [\"key\"↓   : \"value\"]\n    #endif\n}":
-        "class Foo {\n    #if false\n    #else\n        let bar = [\"key\": \"value\"]\n    #endif\n}"
+        "class Foo {\n    #if false\n    #else\n        let bar = [\"key\": \"value\"]\n    #endif\n}",
+        "func foo(\n" +
+            "bar: String,\n" +
+            "baz: String,\n" +
+            "↓completion :@escaping (_ error: Error?) -> Void\n" +
+        ") {}":
+        "func foo(\n" +
+                "bar: String,\n" +
+                "baz: String,\n" +
+                "completion: @escaping (_ error: Error?) -> Void\n" +
+        ") {}",
+        "func foo(\n" +
+            "bar: String,\n" +
+            "baz: String,\n" +
+            "↓completion :(_ error: Error?) -> Void\n" +
+        ") {}":
+        "func foo(\n" +
+                "bar: String,\n" +
+                "baz: String,\n" +
+                "completion: (_ error: Error?) -> Void\n" +
+        ") {}"
     ]
 }

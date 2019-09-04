@@ -3,6 +3,7 @@ import SourceKittenFramework
 
 internal extension ColonRule {
     static let returnIdentifier = "->"
+    static let disableCommand = "// swiftlint:disable"
 
     var pattern: String {
         // If flexible_right_spacing is true, match only 0 whitespaces.
@@ -20,31 +21,27 @@ internal extension ColonRule {
             spacingRegex +              // followed by right spacing regex
             ")" +                       // end group
             "(?:" +                     // Start type group
-            "((\\S[^,]+" +
+            "(\\S.+" +
             ColonRule.returnIdentifier +
-            ").*)" +                     // Closure type
+            ").*" +                     // Closure type
             "|" +                       // or
-            "(" +                       // Capture a type identifier
+                                        // a type identifier,
             "[\\[|\\(]*" +              // which may begin with a series of nested parenthesis or brackets
-            "\\S)" +                    // lazily to the first non-whitespace character
+            "\\S" +                    // lazily to the first non-whitespace character
             ")"                         // end group.
     }
 
     func typeColonViolationRanges(in file: File, matching pattern: String) -> [NSRange] {
         let nsstring = file.contents.bridge()
+        
         return file.matchesAndTokens(matching: pattern).filter { match, syntaxTokens in
             if match.range(at: 2).length > 0 && syntaxTokens.count > 2 { // captured a generic definition
                 let tokens = [syntaxTokens.first, syntaxTokens.last].compactMap { $0 }
                 return isValidMatch(syntaxTokens: tokens, file: file)
             }
 
-            // Check if captured a closure type
-            let closureRange = match.range(at: 4)
-            if closureRange.location != NSNotFound {
-                let possibleClosureType = nsstring.substring(with: closureRange)
-                if possibleClosureType.contains(ColonRule.returnIdentifier) {
-                    return true
-                }
+            if isClosureType(match: match, codeString: nsstring, firstSyntaxToken: syntaxTokens.first) {
+                return true
             }
 
             return isValidMatch(syntaxTokens: syntaxTokens, file: file)
@@ -87,6 +84,27 @@ internal extension ColonRule {
         }
 
         return Set(syntaxKinds).isDisjoint(with: SyntaxKind.commentAndStringKinds)
+    }
+    
+    private func isClosureType(match: NSTextCheckingResult,
+                               codeString: NSString,
+                               firstSyntaxToken: SyntaxToken?) -> Bool {
+        // Check if captured a closure type
+        let closureRange = match.range(at: 3)
+        if closureRange.location != NSNotFound {
+            let possibleClosureType = codeString.substring(with: closureRange)
+            let skipClosureInLiterals = [
+                SyntaxKind.comment.rawValue,
+                SyntaxKind.string.rawValue
+            ]
+            if possibleClosureType.contains(ColonRule.returnIdentifier),
+                !codeString.contains(ColonRule.disableCommand),
+                let firstTokenType = firstSyntaxToken?.type,
+                !skipClosureInLiterals.contains(firstTokenType) {
+                return true
+            }
+        }
+        return false
     }
 }
 
