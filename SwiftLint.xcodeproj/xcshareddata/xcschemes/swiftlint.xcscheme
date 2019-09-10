@@ -88,7 +88,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "lint --path /Users/a-25/Projects/swiftlint/test.swift --no-cache --enable-all-rules"
+            argument = "lint --no-cache"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
