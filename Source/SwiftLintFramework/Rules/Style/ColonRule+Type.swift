@@ -23,11 +23,11 @@ internal extension ColonRule {
             "(?:" +                     // Start type group
             "(\\S.+" +
             ColonRule.returnIdentifier +
-            ").*" +                     // Closure type
+            "[\\s\\w<>]*)" +                     // Closure type
             "|" +                       // or
                                         // a type identifier,
-            "[\\[|\\(]*" +              // which may begin with a series of nested parenthesis or brackets
-            "\\S" +                    // lazily to the first non-whitespace character
+            "([\\[|\\(]*" +              // which may begin with a series of nested parenthesis or brackets
+            "\\S)" +                    // lazily to the first non-whitespace character
             ")"                         // end group.
     }
 
